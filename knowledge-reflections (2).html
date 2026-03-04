@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Reflections — Knowledge Systems</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after {
+    box-sizing: border-box; box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #1a1914;
+    --bg2: #201f19;
+    --surface: #242319;
+    --border: rgba(200, 190, 160, 0.12);
+    --text-primary: #d4cdb8;
+    --text-secondary: #7a7468;
+    --text-dim: #4a4740;
+    --accent: #c8b87a;
+    --accent-dim: rgba(200, 184, 122, 0.15);
+    --serif: 'EB Garamond', Georgia, serif;
+    --mono: 'IBM Plex Mono', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  html, body {
+    width: 100vw;
+    max-width: 100vw;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+  body {
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: var(--serif);
+    font-size: 18px;
+    line-height: 1.7;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── GRAIN OVERLAY ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    background-size: 200px;
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.5;
+  }
+
+  /* ─── HEADER / INTRO ─── */
+  .header {
+    padding: 100px clamp(24px, 5vw, 60px) 80px;
+    max-width: min(1100px, 100%);
+    margin: 0 auto;
+    box-sizing: border-box;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 48px;
+  }
+
+  .header-tag span {
+    color: var(--text-secondary);
+    margin: 0 8px;
+  }
+
+  .header h1 {
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    font-style: italic;
+    font-weight: 400;
+    line-height: 1.2;
+    color: var(--text-primary);
+    max-width: min(820px, 100%);
+    margin-bottom: 40px;
+    letter-spacing: -0.01em;
+  }
+
+  .header-desc {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    max-width: min(540px, 100%);
+    line-height: 1.8;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.02em;
+  }
+
+  /* ─── SECTION NAV ─── */
+  .section-nav {
+    display: flex;
+    gap: 0;
+    padding: 0 clamp(24px, 5vw, 60px);
+    max-width: min(1100px, 100%);
+    margin: 0 auto;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-tab {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    padding: 24px 32px 24px 0;
+    cursor: pointer;
+    border: none;
+    background: none;
+    transition: color 0.3s;
+    position: relative;
+  }
+
+  .nav-tab::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--accent);
+    transition: width 0.4s ease;
+  }
+
+  .nav-tab.active { color: var(--accent); }
+  .nav-tab.active::after { width: calc(100% - 32px); }
+  .nav-tab:hover { color: var(--text-secondary); }
+
+  /* ─── CONTENT AREAS ─── */
+  .content-area {
+    display: none;
+    max-width: min(1100px, 100%);
+    margin: 0 auto;
+    padding: 0 clamp(24px, 5vw, 60px);
+    animation: fadeUp 0.5s ease forwards;
+  }
+  .content-area.active { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── INTRO ROW ─── */
+  .section-intro {
+    padding: 60px 0 40px;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 60px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 60px;
+  }
+
+  .section-intro-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    padding-top: 4px;
+  }
+
+  .section-intro-text {
+    font-size: 1.15rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    line-height: 1.75;
+  }
+
+  /* ─── CARD GRID ─── */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    margin-bottom: 80px;
+  }
+
+  .card {
+    background: var(--bg);
+    padding: 48px 40px;
+    cursor: pointer;
+    transition: background 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card:hover { background: var(--bg2); }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 2px; height: 0;
+    background: var(--accent);
+    transition: height 0.4s ease;
+  }
+  .card:hover::before { height: 100%; }
+
+  .card-number {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.15em;
+    margin-bottom: 32px;
+  }
+
+  .card-eyebrow {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .card-eyebrow-tag {
+    padding: 3px 8px;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+
+  .card h3 {
+    font-size: 1.35rem;
+    font-style: italic;
+    font-weight: 400;
+    line-height: 1.3;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+    letter-spacing: -0.01em;
+  }
+
+  .card-body {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.75;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.01em;
+  }
+
+  .card-meta {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .card-meta-row {}
+
+  .card-meta-label {
+    font-family: var(--mono);
+    font-size: 8px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 4px;
+  }
+
+  .card-meta-value {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-secondary);
+    letter-spacing: 0.02em;
+  }
+
+  .card-read {
+    margin-top: 28px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    transition: color 0.3s;
+  }
+
+  .card:hover .card-read { color: var(--accent); }
+
+  .card-read::before {
+    content: '';
+    width: 24px; height: 1px;
+    background: currentColor;
+    display: inline-block;
+    transition: width 0.3s;
+  }
+
+  .card:hover .card-read::before { width: 40px; }
+
+  /* ─── EXPANDED CARD ─── */
+  .card--expanded { grid-column: 1 / -1; }
+
+  /* ─── POEM BLOCKS ─── */
+  .poem-block {
+    margin: 40px 0;
+    padding: 36px;
+    background: rgba(200, 184, 122, 0.04);
+    border-left: 1px solid rgba(200,184,122,0.4);
+    position: relative;
+  }
+
+  .poem-source {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 24px;
+    opacity: 0.7;
+  }
+
+  .poem-tamil {
+    font-family: var(--serif);
+    font-size: 1.15rem;
+    color: var(--text-primary);
+    line-height: 1.9;
+    margin-bottom: 20px;
+  }
+
+  .poem-translit {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    line-height: 2;
+    margin-bottom: 20px;
+    letter-spacing: 0.03em;
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+    font-style: italic;
+  }
+
+  .poem-translation {
+    font-family: var(--serif);
+    font-size: 1rem;
+    color: var(--text-secondary);
+    line-height: 1.85;
+    font-style: italic;
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+    margin-bottom: 12px;
+  }
+
+  .poem-attr {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-top: 12px;
+  }
+
+  .card--expanded .card-body {
+    margin: 28px 0;
+    padding: 24px 28px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    font-size: 13px;
+    line-height: 1.85;
+    color: var(--text-secondary);
+    letter-spacing: 0.01em;
+  }
+
+  .card--expanded .card-body strong {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 400;
+  }
+
+  /* ─── FEATURED QUOTE ─── */
+  .pull-quote {
+    padding: 60px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin: 0 0 80px;
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+
+  .pull-quote-mark {
+    font-size: 6rem;
+    color: var(--text-dim);
+    line-height: 0.7;
+    font-style: italic;
+    font-family: var(--serif);
+    padding-top: 8px;
+  }
+
+  .pull-quote-text {
+    font-size: 1.5rem;
+    font-style: italic;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    font-weight: 400;
+  }
+
+  .pull-quote-source {
+    margin-top: 20px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+
+  /* ─── THEMES ROW ─── */
+  .themes-row {
+    display: flex;
+    gap: 0;
+    background: var(--border);
+    margin-bottom: 80px;
+  }
+
+  .theme-pill {
+    flex: 1;
+    background: var(--bg);
+    padding: 20px 24px;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-align: center;
+    border: none;
+    cursor: default;
+    transition: all 0.3s;
+  }
+
+  .theme-pill:hover {
+    background: var(--accent-dim);
+    color: var(--accent);
+  }
+
+  /* ─── FOOTER ─── */
+  .page-footer {
+    max-width: min(1100px, 100%);
+    margin: 0 auto;
+    padding: 40px clamp(24px, 5vw, 60px) 80px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border);
+  }
+
+  .footer-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 768px) {
+    .header { padding: 60px 24px 60px; }
+    .section-nav { padding: 0 24px; overflow-x: auto; }
+    .content-area { padding: 0 24px; }
+    .section-intro { grid-template-columns: 1fr; gap: 24px; }
+    .cards { grid-template-columns: 1fr; }
+    .card { padding: 36px 28px; }
+    .pull-quote { grid-template-columns: 1fr; }
+    .pull-quote-mark { display: none; }
+    .themes-row { flex-wrap: wrap; }
+    .page-footer { padding: 40px 24px; flex-direction: column; gap: 16px; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header class="header">
+  <div class="header-tag">Portfolio <span>/</span> Reflections</div>
+  <h1>What knowledge lives outside the archive?</h1>
+  <p class="header-desc">
+    A compilation of ongoing readings, conversations, and inherited stories examined through the lens of nature connection, power in social systems, what it means to be a community. These stem mainly from the ancient literature, orature (some of it which was eventually turned into written format), rituals performed and practiced with and along bodies of nature, legends that has been passed down through generations.
+  </p>
+</header>
+
+<!-- ── SECTION NAV ── -->
+<nav class="section-nav">
+  <button class="nav-tab active" onclick="switchTab('literature', this)">Literature</button>
+  <button class="nav-tab" onclick="switchTab('rituals', this)">Rituals</button>
+  <button class="nav-tab" onclick="switchTab('legends', this)">Legends</button>
+</nav>
+
+<!-- ══════════════════════════════════
+     TAB 1 — LITERATURE
+══════════════════════════════════ -->
+<div id="literature" class="content-area active">
+
+  <div class="section-intro">
+    <div class="section-intro-label">Reading practice</div>
+    <div class="section-intro-text">
+      Ancient literature and orature often hold knowledge on ways of living, sharing and being. The topics range from water management to medicinal practices to educational values.
+    </div>
+  </div>
+
+  <div class="themes-row">
+    <div class="theme-pill">Nature Connection</div>
+    <div class="theme-pill">Power Dynamics</div>
+    <div class="theme-pill">Symbiosis</div>
+    <div class="theme-pill">Decolonial Methods</div>
+  </div>
+
+  <div class="cards">
+
+    <div class="card card--expanded">
+      <div class="card-number">01 / 01</div>
+      <div class="card-eyebrow">
+        <span class="card-eyebrow-tag">Sangam</span>
+        <span class="card-eyebrow-tag">Governance · Water</span>
+        <span class="card-eyebrow-tag">1st–4th c. CE</span>
+      </div>
+      <h3>Power is Downstream of the Land</h3>
+
+      <!-- POEM 1 — Avvaiyar -->
+      <div class="poem-block">
+        <div class="poem-source">Avvaiyar — on the ridge of a field · c. 100 BCE–300 CE</div>
+        <div class="poem-tamil">வரப்பு உயர, நீர் உயரும்;<br>நீர் உயர, நெல் உயரும்;<br>நெல் உயர, குடி உயரும்;<br>குடி உயர, கோன் உயர்வான்.</div>
+        <div class="poem-translit">Varappu uyara, nīr uyarum;<br>Nīr uyara, nel uyarum;<br>Nel uyara, kuṭi uyarum;<br>Kuṭi uyara, kōṉ uyarvāṉ.</div>
+        <div class="poem-translation">
+          As the ridge of the field rises, its capacity to hold water rises.<br>
+          As water capacity rises, crops grow well.<br>
+          As crops grow well, people live better.<br>
+          As people live better, the kingdom prospers.<br>
+          As the kingdom prospers, the king himself rises.
+        </div>
+        <div class="poem-attr">Avvaiyar (poetess, Sangam era) — on agricultural governance · c. 100 BCE–300 CE</div>
+      </div>
+
+      <div class="card-body">
+        <strong>Governance as ecology:</strong> The king is the last consequence of the system, not its origin. Power sits downstream of water, which sits downstream of soil, which depends on the decision to build and maintain a field-bund. Infrastructure and ethics are the same thing here — one ridge holds everything.
+      </div>
+
+      <!-- POEM 2 — Thiruvalluvar / Tirukkural -->
+      <div class="poem-block">
+        <div class="poem-source">Thiruvalluvar, Tirukkural — Van Sirappu (In Praise of Rain), couplet 1 · c. 1st–5th century CE</div>
+        <div class="poem-tamil">நீர் இன்று அமையாது உலகு என்னும் — வான் சிறப்பு<br>ஊர் இன்று அமையா உயிர்.</div>
+        <div class="poem-translit">Nīr iṉṟu amaiyātu ulaku eṉṉum — vāṉ ciṟappu<br>Ūr iṉṟu amaiyā uyir.</div>
+        <div class="poem-translation">
+          There is no world without water — this is the greatness of rain.<br>
+          As a village cannot exist without its people,<br>
+          life cannot exist without rain.
+        </div>
+        <div class="poem-attr">Thiruvalluvar — Tirukkural, chapter on rain (Van Sirappu) · c. 1st–5th century CE</div>
+      </div>
+
+      <div class="card-body">
+        Thiruvalluvar devotes an entire chapter of the Tirukkural to rain as the condition for everything else. Charity and penance will both cease, he writes, if the clouds are not charitable. Climate and ethics are linked here. The collapse of one is the collapse of the other.
+      </div>
+
+      <div class="card-meta">
+        <div class="card-meta-row">
+          <div class="card-meta-label">Sources</div>
+          <div class="card-meta-value">Avvaiyar · Tirukkural · Silappadhikaram · Purananuru</div>
+        </div>
+        <div class="card-meta-row">
+          <div class="card-meta-label">Threads</div>
+          <div class="card-meta-value">Governance as water management · Climate as moral order · Identity through watershed</div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+
+
+</div>
+
+<!-- ══════════════════════════════════
+     TAB 2 — RITUALS
+══════════════════════════════════ -->
+<div id="rituals" class="content-area">
+
+  <div class="section-intro">
+    <div class="section-intro-label">Field encounters</div>
+    <div class="section-intro-text">
+      Rituals performed and practiced with and along bodies of nature like water, forest, soil. Recorded as systems of maintenance, reciprocity, and collective memory and as practices of staying in relationship with nature.
+    </div>
+  </div>
+
+  <div class="themes-row">
+    <div class="theme-pill">Reciprocity</div>
+    <div class="theme-pill">Seasonal Cycles</div>
+    <div class="theme-pill">Collective Memory</div>
+    <div class="theme-pill">Somatic Knowledge</div>
+  </div>
+
+  <div class="cards">
+
+    <div class="card card--expanded">
+      <div class="card-number">01 / 04</div>
+      <div class="card-eyebrow">
+        <span class="card-eyebrow-tag">Senai Thottu Vaithal</span>
+        <span class="card-eyebrow-tag">Tamil</span>
+        <span class="card-eyebrow-tag">Birth · Marriage</span>
+      </div>
+      <h3>You are a person of a particular water</h3>
+
+      <div class="poem-block">
+        <div class="poem-source">Senai Thottu Vaithal — oral practice, Tamil Nadu · origins uncertain, attested from early Sangam period</div>
+        <div class="poem-tamil">[வாய்மொழி வழக்கு — எழுத்து வடிவமற்றது]</div>
+        <div class="poem-translit">Caṇai Toṭṭu Vaittal — oral practice, no fixed written source</div>
+        <div class="poem-translation">
+          At birth, the first thing placed on the newborn's tongue is water from the village's own source, its well, its tank, its river.
+        </div>
+        <div class="poem-attr">Tamil oral tradition · origins pre-Sangam, documentation ongoing</div>
+      </div>
+
+      <div class="card-body">
+        A person is introduced to their community through its water. The tank or well a child first tastes is the place they come from.
+      </div>
+
+      <div class="card-meta">
+        <div class="card-meta-row">
+          <div class="card-meta-label">Region</div>
+          <div class="card-meta-value">Tamil Nadu — widespread practice</div>
+        </div>
+        <div class="card-meta-row">
+          <div class="card-meta-label">Thread</div>
+          <div class="card-meta-value">Place-based identity · Watershed as community</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-number">02 / 02</div>
+      <div class="card-eyebrow">
+        <span class="card-eyebrow-tag">Forest</span>
+        <span class="card-eyebrow-tag">Baiga</span>
+        <span class="card-eyebrow-tag">Central India</span>
+      </div>
+      <h3>Asking the forest before the harvest</h3>
+      <p class="card-body">
+        Among certain Baiga communities in Madhya Pradesh, the first cut of beedi leaf is preceded by a spoken address to the tree — a request, not a command. The act carries an obligation: if the forest gives, something must return. This is not ceremony for its own sake. It is a protocol for staying in relationship.
+      </p>
+      <div class="card-meta">
+        <div class="card-meta-row">
+          <div class="card-meta-label">Region</div>
+          <div class="card-meta-value">Madhya Pradesh · oral tradition, undated</div>
+        </div>
+        <div class="card-meta-row">
+          <div class="card-meta-label">Thread</div>
+          <div class="card-meta-value">Consent and reciprocity</div>
+        </div>
+      </div>
+      <div class="card-read">Expand reflection</div>
+    </div>
+
+  </div>
+
+  <div class="pull-quote">
+    <div class="pull-quote-mark">"</div>
+    <div>
+      <div class="pull-quote-text">The ritual is not a decoration on the system. The ritual is the system, running maintenance on itself.</div>
+      <div class="pull-quote-source">— Field note, 2023</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════
+     TAB 3 — LEGENDS
+══════════════════════════════════ -->
+<div id="legends" class="content-area">
+
+  <div class="section-intro">
+    <div class="section-intro-label">Transmitted knowledge</div>
+    <div class="section-intro-text">
+      Unlearning and learning in progress. Notes being gathered, visit back to see them here.
+    </div>
+  </div>
+
+  <div class="themes-row">
+    <div class="theme-pill">Cosmologies</div>
+    <div class="theme-pill">Non-human Agency</div>
+    <div class="theme-pill">Warning Systems</div>
+    <div class="theme-pill">Social Contract</div>
+  </div>
+
+
+
+  <div class="pull-quote">
+    <div class="pull-quote-mark">"</div>
+    <div>
+      <div class="pull-quote-text">The legend does not explain nature. It keeps a record of what happens when you stop paying attention to it.</div>
+      <div class="pull-quote-source">— Working notes on indigenous epistemology</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── FOOTER ── -->
+<footer class="page-footer">
+  <span class="footer-label">Reflections — ongoing</span>
+  <span class="footer-label">Design Research / Decolonisation / Pluriverse</span>
+</footer>
+
+<script>
+  function switchTab(id, btn) {
+    document.querySelectorAll('.content-area').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+  }
+</script>
+</body>
+</html>
