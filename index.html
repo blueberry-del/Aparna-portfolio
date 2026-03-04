@@ -8,6 +8,42 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&family=Spectral:ital,wght@0,300;1,300&display=swap" rel="stylesheet">
 
 <style>
+  /* ── FIXED CV BUTTON ── */
+.ap-cv-float {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 50px;
+  height: 50px;
+  background: var(--charcoal);
+  color: var(--parchment);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.05em;
+  z-index: 1000;
+  transition: transform 0.3s ease, background 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.ap-cv-float:hover {
+  background: var(--burnt);
+  transform: translateY(-5px);
+}
+
+/* Mobile: move it slightly so it doesn't block content */
+@media (max-width: 600px) {
+  .ap-cv-float {
+    bottom: 1.5rem;
+    right: 1.5rem;
+    width: 45px;
+    height: 45px;
+  }
+}
   /* This stops the browser from turning links blue */
 .ap-work-grid a {
   text-decoration: none !important; 
@@ -762,4 +798,7 @@ body::before {
   }, { threshold: 0.1 });
   reveals.forEach(el => observer.observe(el));
 </script>
+  <a href="Aparna Gomathi Nataraja Pandian_Portfolio.pdf" target="_blank" class="ap-cv-float">
+  CV
+</a>
 </html>
